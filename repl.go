@@ -1,27 +1,62 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
+	"os"
 	"strings"
-	"unicode"
 )
 
-func cleanInput(text string) []string {
-	var words []string
-	var currentWord strings.Builder
-	for _, ch := range text {		
-		if unicode.IsSpace(ch) {
-			if currentWord.Len() > 0 {
-				words = append(words, currentWord.String())
-				currentWord.Reset()
+func startRepl() {
+	reader := bufio.NewScanner(os.Stdin)
+	for {
+		fmt.Print("Pokedex > ")
+		reader.Scan()
+
+		words := cleanInput(reader.Text())
+		if len(words) == 0 {
+			continue
+		}
+
+		commandName := words[0]
+
+		command, exists := getCommands()[commandName]
+		if exists {
+			err := command.callback()
+			if err != nil {
+				fmt.Println(err)
 			}
+			continue
 		} else {
-			currentWord.WriteRune(unicode.ToLower(ch))
+			fmt.Println("Unknown command")
+			continue
 		}
 	}
-	if currentWord.Len() > 0 {
-		words = append(words, currentWord.String())
-	}
+}
+
+func cleanInput(text string) []string {
+	output := strings.ToLower(text)
+	words := strings.Fields(output)
 	return words
 }
 
+type cliCommand struct {
+	name        string
+	description string
+	callback    func() error
+}
 
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    commandHelp,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+	}
+}
