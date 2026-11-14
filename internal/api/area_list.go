@@ -17,7 +17,7 @@ type AreasList struct {
 }
 
 func (c *Client) GetAreas(nextPage *string) (AreasList, error) {
-	url := "https://pokeapi.co/api/v2/location-area/"
+	url := c.baseURL + "/location-area/"
 	if nextPage != nil {
 		url = *nextPage
 	}
