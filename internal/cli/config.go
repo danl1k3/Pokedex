@@ -1,6 +1,8 @@
 package cli
 
-import "github.com/danl1k3/pokedex/internal/api"
+import (
+	"github.com/danl1k3/pokedex/internal/api"
+)
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
@@ -24,6 +26,26 @@ func getCommands() map[string]cliCommand {
 			description: "Lists previous areas of Pokemon World",
 			callback:    commandMapb,
 		},
+		"explore": {
+			name: 	     "explore",
+			description: "Lists all pokemons name in specified area",
+			callback:    commandExplore,
+		},
+		"catch": {
+			name:	     "catch",
+			description: "Give abillity to catch the pokemon",
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:	     "inspect",
+			description: "Gives info about caught pokemon",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:	     "pokedex",
+			description: "Lists all caught pokemons",
+			callback:    commandPokedex,
+		},
 	}
 }
 
@@ -31,6 +53,7 @@ type config struct {
 	apiClient 	api.Client
 	nextArea 	*string
 	previousArea 	*string
+	caughtPokemons  map[string]api.Pokemon
 	command 	map[string]cliCommand
 }
 
@@ -38,7 +61,7 @@ type config struct {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, ...string) error
 
 }
 

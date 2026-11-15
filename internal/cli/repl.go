@@ -15,6 +15,7 @@ func Start() {
 	cfg := config{
 		apiClient: client,
 		command: getCommands(),
+		caughtPokemons: map[string]api.Pokemon{},
 	}
 	startRepl(&cfg)
 }
@@ -31,10 +32,13 @@ func startRepl(cfg *config) {
 		}
 
 		commandName := words[0]
-
+		args := []string{}
+		if len(words) > 1 {
+			args = words[1:]
+		}
 		command, exists := cfg.command[commandName]
 		if exists {
-			err := command.callback(cfg)
+			err := command.callback(cfg, args...)
 			if err != nil {
 				fmt.Println(err)
 			}

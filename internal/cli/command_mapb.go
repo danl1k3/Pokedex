@@ -3,7 +3,7 @@ package cli
 import "fmt"
 
 
-func commandMapb(cfg *config) error {
+func commandMapb(cfg *config, args ...string) error {
 	if cfg.previousArea == nil {
 		fmt.Println("you're on the first page")
 		return nil

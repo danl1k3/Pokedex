@@ -2,7 +2,7 @@ package cli
 
 import "fmt"
 
-func commandHelp(cfg *config) error {
+func commandHelp(cfg *config, args ...string) error {
 	fmt.Print("Welcome to the Pokedex! \nUsage:")
 	fmt.Println()
 	for _, command := range cfg.command {

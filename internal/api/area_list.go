@@ -39,7 +39,7 @@ func (c *Client) GetAreas(nextPage *string) (AreasList, error) {
 		}
 		
 		if res.StatusCode > 299 {
-			return AreasList{}, fmt.Errorf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
+			return AreasList{}, fmt.Errorf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, data)
 		}
 		fmt.Println("Cache miss: making network request...")
 		body = data
