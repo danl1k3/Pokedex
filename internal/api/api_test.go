@@ -9,7 +9,7 @@ import (
 
 func TestNewClient(t *testing.T) {
 	timeout := 5 * time.Second
-	client := NewClient(timeout)
+	client := NewClient(timeout, 5 * time.Minute)
 
 	if client.httpClient.Timeout != timeout {
 		t.Errorf("got timeout %v, want %v", client.httpClient.Timeout, timeout)
@@ -38,7 +38,7 @@ func TestGetAreas_Mock(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := NewClient(5 * time.Second)
+		client := NewClient(5 * time.Second, 5 * time.Minute)
 		client.baseURL = server.URL
 
 		areas, err := client.GetAreas(nil)
@@ -62,7 +62,7 @@ func TestGetAreas_Mock(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := NewClient(5 * time.Second)
+		client := NewClient(5 * time.Second, 5 * time.Minute)
 		pageURL := server.URL + "/location-area/?offset=20&limit=20"
 
 		areas, err := client.GetAreas(&pageURL)
@@ -80,7 +80,7 @@ func TestGetAreas_Mock(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := NewClient(5 * time.Second)
+		client := NewClient(5 * time.Second, 5 * time.Minute)
 		client.baseURL = server.URL
 
 		if _, err := client.GetAreas(nil); err == nil {
@@ -95,7 +95,7 @@ func TestGetAreas_Mock(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := NewClient(5 * time.Second)
+		client := NewClient(5 * time.Second, 5 * time.Minute)
 		client.baseURL = server.URL
 
 		if _, err := client.GetAreas(nil); err == nil {
@@ -109,7 +109,7 @@ func TestGetAreas_Live(t *testing.T) {
 		t.Skip("skipping live test")
 	}
 
-	client := NewClient(10 * time.Second)
+	client := NewClient(10 * time.Second, 5 * time.Minute)
 	areas, err := client.GetAreas(nil)
 	if err != nil {
 		t.Fatalf("live request failed: %v", err)

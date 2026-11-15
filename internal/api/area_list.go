@@ -22,29 +22,38 @@ func (c *Client) GetAreas(nextPage *string) (AreasList, error) {
 		url = *nextPage
 	}
 	
-	// send the Response
-	res, err := c.httpClient.Get(url)
-	if err != nil {
-		return AreasList{}, err
-	}
+	body, ok := c.Cache.Get(url)
+	if !ok {
+		// send the Response
+		res, err := c.httpClient.Get(url)
+		if err != nil {
+			return AreasList{}, err
+		}
 	
-	defer res.Body.Close()
-	// get response Body
-	body, err := io.ReadAll(res.Body)
+		defer res.Body.Close()
+		// get response Body
+		data, err := io.ReadAll(res.Body)
 	
-	if err != nil {
-		return AreasList{}, err
-	}
+		if err != nil {
+			return AreasList{}, err
+		}
 		
-	if res.StatusCode > 299 {
-		return AreasList{}, fmt.Errorf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
+		if res.StatusCode > 299 {
+			return AreasList{}, fmt.Errorf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
+		}
+		fmt.Println("Cache miss: making network request...")
+		body = data
+	}else {
+		fmt.Println("Cache hit!")
 	}
 	
-
 	//parse res.Body
 	var areas AreasList
 	if err := json.Unmarshal(body, &areas); err != nil {
 		return AreasList{}, err
+	}
+	if !ok {
+		c.Cache.Add(url, body)
 	}
 	return areas, nil
 }
